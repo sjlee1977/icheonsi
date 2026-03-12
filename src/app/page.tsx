@@ -18,8 +18,8 @@ export default function Home() {
                 ICHEONSI.COM BETA
               </div>
               <h1 className="hero-title">
-                이천 살면<br />
-                <span className="text-gradient">이거 하나면</span> 돼.
+                슬기로운<br />
+                <span className="text-gradient">이천 생활.</span>
               </h1>
               <p className="hero-desc">
                 쌀과 도자기의 도시를 넘어 — SK하이닉스 직장인부터 신도시 유입 인구까지
