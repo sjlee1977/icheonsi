@@ -1,0 +1,200 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ================================
+// 유저
+// ================================
+model User {
+  id               String    @id @default(cuid())
+  name             String?
+  email            String?   @unique
+  emailVerified    DateTime?
+  image            String?
+  nickname         String?   @unique
+  bio              String?   @db.Text
+  provider         String?
+  grade            Grade     @default(SPROUT)
+  points           Int       @default(0)
+  isVerifiedHynix  Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  accounts     Account[]
+  sessions     Session[]
+  posts        Post[]
+  comments     Comment[]
+  likes        Like[]
+  reports      Report[]
+  marketItems  MarketItem[]
+}
+
+enum Grade {
+  SPROUT    // 새싹 (0~99점)
+  RESIDENT  // 주민 (100~499점)
+  LOCAL     // 토박이 (500~1999점)
+  CHIEF     // 이장 (2000점+)
+}
+
+// ================================
+// NextAuth 필수 모델
+// ================================
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ================================
+// 커뮤니티 게시판
+// ================================
+model Post {
+  id          String       @id @default(cuid())
+  title       String
+  content     String       @db.LongText
+  category    PostCategory
+  isAnonymous Boolean      @default(false)
+  isPinned    Boolean      @default(false)
+  viewCount   Int          @default(0)
+  authorId    String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  author   User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments Comment[]
+  likes    Like[]
+  reports  Report[]
+
+  @@index([category])
+  @@index([createdAt])
+}
+
+enum PostCategory {
+  FREE        // 자유게시판
+  HYNIX       // 하이닉스 게시판
+  COMPLAINT   // 민원 2.0
+  NEWTOWN     // 신도시 정착
+  MARKET_INFO // 장터 정보
+  LOCAL_INFO  // 이천 소식
+}
+
+model Comment {
+  id          String   @id @default(cuid())
+  content     String   @db.Text
+  isAnonymous Boolean  @default(false)
+  authorId    String
+  postId      String
+  parentId    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  author  User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  post    Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  parent  Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies Comment[] @relation("CommentReplies")
+  likes   Like[]
+
+  @@index([postId])
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String?
+  commentId String?
+  createdAt DateTime @default(now())
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post    Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  comment Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@unique([userId, commentId])
+}
+
+// ================================
+// 이천 장터
+// ================================
+model MarketItem {
+  id          String         @id @default(cuid())
+  title       String
+  description String         @db.Text
+  price       Int
+  category    MarketCategory
+  status      MarketStatus   @default(AVAILABLE)
+  images      String?        @db.Text
+  location    String?
+  sellerId    String
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  seller User @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  @@index([category])
+  @@index([status])
+}
+
+enum MarketCategory {
+  RICE        // 이천쌀 직거래
+  PRODUCE     // 농산물
+  ELECTRONICS // 전자기기
+  FURNITURE   // 가구
+  CLOTHING    // 의류
+  KIDS        // 유아동
+  OTHER       // 기타
+}
+
+enum MarketStatus {
+  AVAILABLE // 판매중
+  RESERVED  // 예약중
+  SOLD      // 판매완료
+}
+
+// ================================
+// 신고
+// ================================
+model Report {
+  id        String   @id @default(cuid())
+  reason    String
+  userId    String
+  postId    String?
+  createdAt DateTime @default(now())
+
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post? @relation(fields: [postId], references: [id], onDelete: Cascade)
+}

@@ -1,4 +1,7 @@
-@import "tailwindcss";
+const fs = require('fs');
+const path = require('path');
+
+const css = `@import "tailwindcss";
 
 /* ================================
    이천시.com 디자인 시스템 v2
@@ -110,19 +113,11 @@ body {
 
 /* BENTO GRID 2x3 */
 .bento-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.bento-card { padding: 28px 30px; border-radius: var(--radius); background: white; display: flex; flex-direction: column; gap: 8px; transition: transform 0.25s, box-shadow 0.25s; text-decoration: none; color: var(--text); min-height: 130px; }
+.bento-card { padding: 20px 22px; border-radius: var(--radius); background: white; display: flex; flex-direction: column; gap: 6px; transition: transform 0.25s, box-shadow 0.25s; text-decoration: none; color: var(--text); }
 .bento-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(13,27,42,0.14); }
-.bento-label { font-family: var(--font-mono), monospace; font-size: 0.72rem; letter-spacing: 0.12em; color: var(--text-light); text-transform: uppercase; }
-.bento-main { font-family: var(--font-serif), serif; font-size: 1.9rem; font-weight: 800; letter-spacing: -0.02em; }
-.bento-sub { font-size: 0.84rem; color: var(--text-mid); }
-
-/* BENTO CARD VARIANTS */
-.weather-bento  { border-top: 3px solid #87CEEB; }
-.subway-bento   { border-top: 3px solid var(--primary); }
-.currency-bento { border-top: 3px solid #F59E0B; }
-.pharmacy-bento { border-top: 3px solid #6EE7B7; }
-.hynix-bento    { border-top: 3px solid #60A5FA; }
-.community-bento{ border-top: 3px solid #A78BFA; }
+.bento-label { font-family: var(--font-mono), monospace; font-size: 0.62rem; letter-spacing: 0.12em; color: var(--text-light); text-transform: uppercase; }
+.bento-main { font-family: var(--font-serif), serif; font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em; }
+.bento-sub { font-size: 0.74rem; color: var(--text-mid); }
 
 /* LANDING SECTIONS */
 .land-section { padding: 100px 0; border-top: 1px solid var(--border); }
@@ -347,3 +342,7 @@ body {
   .contact-grid { grid-template-columns: 1fr 1fr; }
   .hero-title { font-size: 2.2rem; }
 }
+`;
+
+fs.writeFileSync(path.join(__dirname, '../src/app/globals.css'), css);
+console.log('done', css.length);
