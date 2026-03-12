@@ -111,7 +111,10 @@ function parseMinutes(hhmm: string): number {
 function getNowKSTMinutes(): number {
   const now = new Date()
   const kst = new Date(now.getTime() + 9 * 60 * 60 * 1000)
-  return kst.getUTCHours() * 60 + kst.getUTCMinutes()
+  const h = kst.getUTCHours()
+  const m = kst.getUTCMinutes()
+  // 자정 이후(00:xx)는 24시간 이후로 처리 (parseMinutes와 동일 기준)
+  return h === 0 ? 24 * 60 + m : h * 60 + m
 }
 
 function isWeekendOrHoliday(): boolean {
