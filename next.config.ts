@@ -4,8 +4,7 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        // HTML 페이지만 캐시 비활성화 (_next/static 은 제외)
-        source: "/((?!_next/static|_next/image|favicon\\.ico).*)",
+        source: "/:path*",
         headers: [
           {
             key: "Cache-Control",
