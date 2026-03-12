@@ -57,7 +57,7 @@ export default function Home() {
         </section>
 
         {/* 모바일 전용 벤토 섹션 */}
-        <section className="mobile-bento-section">
+        <section className="mobile-bento-section md:hidden">
           <BentoClient />
         </section>
 

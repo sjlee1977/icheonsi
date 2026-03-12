@@ -109,7 +109,7 @@ body {
 .stat-label { font-size: 0.72rem; color: rgba(13,27,42,0.5); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
 
 /* 모바일 전용 벤토 섹션 (데스크톱에서는 hero-visual 사용) */
-.mobile-bento-section { display: none; background: var(--primary); padding: 0 20px 40px; }
+.mobile-bento-section { background: var(--primary); padding: 0 20px 40px; }
 
 /* BENTO GRID 2x3 */
 .bento-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -327,7 +327,6 @@ body {
   .hero-actions { flex-direction: column; }
   .hero-stats { gap: 28px; }
   .hero-visual { display: none; }
-  .mobile-bento-section { display: block; }
   .bento-grid { gap: 8px; }
   .bento-card { padding: 20px 18px; min-height: 100px; }
   .nav-links { display: none; }
