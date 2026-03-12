@@ -109,7 +109,8 @@ body {
 .stat-label { font-size: 0.72rem; color: rgba(13,27,42,0.5); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
 
 /* 모바일 전용 벤토 섹션 (데스크톱에서는 hero-visual 사용) */
-.mobile-bento-section { background: var(--primary); padding: 0 20px 40px; }
+.mobile-bento-section { display: block; background: var(--primary); padding: 32px 20px 40px; }
+@media (min-width: 769px) { .mobile-bento-section { display: none !important; } }
 
 /* BENTO GRID 2x3 */
 .bento-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
