@@ -108,7 +108,6 @@ body {
 .stat-value { font-family: var(--font-serif), serif; font-size: 2rem; font-weight: 900; letter-spacing: -0.03em; }
 .stat-label { font-size: 0.72rem; color: rgba(13,27,42,0.5); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
 
-
 /* BENTO GRID 2x3 */
 .bento-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .bento-card { padding: 28px 30px; border-radius: var(--radius); background: white; display: flex; flex-direction: column; gap: 8px; transition: transform 0.25s, box-shadow 0.25s; text-decoration: none; color: var(--text); min-height: 130px; }
@@ -324,9 +323,7 @@ body {
   .hero-title { font-size: 2.8rem; }
   .hero-actions { flex-direction: column; }
   .hero-stats { gap: 28px; }
-  .hero-visual { display: block; }
-  .bento-grid { gap: 8px; }
-  .bento-card { padding: 20px 18px; min-height: 100px; }
+  .hero-visual { display: none; }
   .nav-links { display: none; }
   .hamburger { display: flex; }
   .page-title { font-size: 2.2rem; }
