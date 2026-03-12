@@ -56,6 +56,11 @@ export default function Home() {
           </div>
         </section>
 
+        {/* 모바일 전용 벤토 섹션 */}
+        <section className="mobile-bento-section">
+          <BentoClient />
+        </section>
+
         {/* OH! — 이천시.com이란 */}
         <section className="land-section off">
           <div className="land-container">
