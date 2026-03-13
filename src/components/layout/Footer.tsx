@@ -7,7 +7,7 @@ export default function Footer() {
         <div className="footer-top">
           <div className="footer-brand">
             <div className="logo">
-              이천시<span>.com</span>
+              이천시
             </div>
             <p>이천의 모든 사람과 정보를 하나로 잇습니다.</p>
           </div>
@@ -30,7 +30,7 @@ export default function Footer() {
         </div>
 
         <div className="footer-bottom">
-          <p>© 2025 ICHEONSI.COM · 이천의 진짜 디지털 광장</p>
+          <p>© 2026 ICHEONSI · 이천의 진짜 디지털 광장</p>
         </div>
       </div>
     </footer>

@@ -31,7 +31,7 @@ export default function Navbar() {
         {/* 로고 */}
         <Link href="/" className="logo">
           <span className="logo-dot" />
-          이천시<span>.com</span>
+          이천시
         </Link>
 
         {/* 데스크탑 링크 */}

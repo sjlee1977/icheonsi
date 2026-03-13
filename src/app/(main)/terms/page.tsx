@@ -9,12 +9,12 @@ export default function TermsPage() {
     <div className="page-container" style={{ maxWidth: '720px' }}>
       <header className="page-header">
         <h1 className="page-title">이용약관</h1>
-        <p className="page-desc">이천시.com 서비스 이용약관</p>
+        <p className="page-desc">이천시 서비스 이용약관</p>
       </header>
 
       <div style={{ lineHeight: '1.8', color: 'var(--text)', fontSize: '0.95rem' }}>
         <h2 style={{ fontSize: '1.1rem', fontWeight: 700, marginTop: '2rem', marginBottom: '0.75rem' }}>제1조 (목적)</h2>
-        <p>이 약관은 이천시.com(이하 "서비스")이 제공하는 서비스의 이용 조건 및 절차에 관한 사항을 규정함을 목적으로 합니다.</p>
+        <p>이 약관은 이천시(이하 "서비스")이 제공하는 서비스의 이용 조건 및 절차에 관한 사항을 규정함을 목적으로 합니다.</p>
 
         <h2 style={{ fontSize: '1.1rem', fontWeight: 700, marginTop: '2rem', marginBottom: '0.75rem' }}>제2조 (서비스 이용)</h2>
         <ul style={{ paddingLeft: '1.5rem' }}>
@@ -35,9 +35,9 @@ export default function TermsPage() {
         <p>운영상, 기술상의 이유로 서비스를 변경하거나 일시 중단할 수 있으며, 이에 대한 별도 보상은 하지 않습니다.</p>
 
         <h2 style={{ fontSize: '1.1rem', fontWeight: 700, marginTop: '2rem', marginBottom: '0.75rem' }}>제5조 (면책)</h2>
-        <p>이천시.com은 실시간 정보(날씨, 교통 등)의 정확성을 보장하지 않으며, 정보 이용으로 인한 손해에 대해 책임지지 않습니다.</p>
+        <p>이천시은 실시간 정보(날씨, 교통 등)의 정확성을 보장하지 않으며, 정보 이용으로 인한 손해에 대해 책임지지 않습니다.</p>
 
-        <p style={{ marginTop: '3rem', fontSize: '0.8rem', color: 'var(--muted)' }}>시행일: 2025년 1월 1일</p>
+        <p style={{ marginTop: '3rem', fontSize: '0.8rem', color: 'var(--muted)' }}>시행일: 2026년 1월 1일</p>
       </div>
     </div>
   )

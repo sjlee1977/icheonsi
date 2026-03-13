@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 
 interface WeatherData {
   temp: number | string
@@ -37,6 +37,11 @@ const WEATHER_ICONS: Record<string, string> = {
   소나기: '⛈️', 빗방울: '🌦️', 빗방울눈날림: '🌨️', 눈날림: '🌨️',
 }
 
+const REGIONS = [
+  '전체', '장호원읍', '부발읍', '신둔면', '백사면', '호법면', '마장면', '대월면', '모가면', '설성면', '율면', 
+  '창전동', '관고동', '중리동', '증포동'
+]
+
 function minutesLabel(min: number): string {
   if (min === 0) return '곧 출발'
   return `${min}분 후`
@@ -48,6 +53,7 @@ export default function NowClient() {
   const [pharmacies, setPharmacies] = useState<MedicalItem[]>([])
   const [subwayData, setSubwayData] = useState<SubwayData | null>(null)
   const [mapTab, setMapTab] = useState<'pharmacy' | 'hospital'>('pharmacy')
+  const [regionFilter, setRegionFilter] = useState('전체')
   const [loading, setLoading] = useState({ weather: true, medical: true, subway: true })
   const [lastUpdated, setLastUpdated] = useState('')
 
@@ -64,12 +70,10 @@ export default function NowClient() {
 
   const fetchMedical = useCallback(async () => {
     try {
-      const [hospRes, pharmRes] = await Promise.all([
-        fetch('/api/hospitals?type=hospital'),
-        fetch('/api/hospitals?type=pharmacy'),
-      ])
-      setHospitals((await hospRes.json()).list ?? [])
-      setPharmacies((await pharmRes.json()).list ?? [])
+      const res = await fetch('/api/med-now')
+      const data = await res.json()
+      setHospitals(data.hospital ?? [])
+      setPharmacies(data.pharmacy ?? [])
     } catch { /* 빈 배열 유지 */ }
     finally { setLoading(prev => ({ ...prev, medical: false })) }
   }, [])
@@ -92,6 +96,7 @@ export default function NowClient() {
 
     const weatherInterval = setInterval(fetchWeather, 10 * 60 * 1000)
     const subwayInterval = setInterval(fetchSubway, 60 * 1000)
+    const medicalInterval = setInterval(fetchMedical, 5 * 60 * 1000)
 
     if (typeof window !== 'undefined') {
       const hash = window.location.hash
@@ -99,7 +104,11 @@ export default function NowClient() {
       else if (hash === '#hospital') setMapTab('hospital')
     }
 
-    return () => { clearInterval(weatherInterval); clearInterval(subwayInterval) }
+    return () => { 
+      clearInterval(weatherInterval); 
+      clearInterval(subwayInterval); 
+      clearInterval(medicalInterval);
+    }
   }, [fetchWeather, fetchMedical, fetchSubway])
 
   useEffect(() => {
@@ -112,7 +121,18 @@ export default function NowClient() {
   }, [loading.medical])
 
   const weatherIcon = WEATHER_ICONS[weather?.status ?? ''] ?? '🌤️'
-  const activeList = mapTab === 'pharmacy' ? pharmacies : hospitals
+
+  const filteredHospitals = useMemo(() => {
+    if (regionFilter === '전체') return hospitals
+    return hospitals.filter(h => h.address.includes(regionFilter))
+  }, [hospitals, regionFilter])
+
+  const filteredPharmacies = useMemo(() => {
+    if (regionFilter === '전체') return pharmacies
+    return pharmacies.filter(p => p.address.includes(regionFilter))
+  }, [pharmacies, regionFilter])
+
+  const activeList = mapTab === 'pharmacy' ? filteredPharmacies : filteredHospitals
 
   const nextTrain = (() => {
     if (!subwayData) return null
@@ -136,64 +156,55 @@ export default function NowClient() {
 
       <div className="now-grid">
         <section className="now-card weather-card">
-          <div className="card-label">{weatherIcon} 날씨</div>
+          <div className="card-label">☀️ WEATHER</div>
           {loading.weather ? (
-            <div className="card-value" style={{ fontSize: '1.2rem' }}>로딩 중…</div>
+            <div className="card-value">로딩 중…</div>
           ) : weather?.error && weather.temp === '--' ? (
-            <div className="card-value" style={{ fontSize: '1rem', color: 'var(--muted)' }}>오류</div>
+            <div className="card-value" style={{ color: 'var(--muted)' }}>오류</div>
           ) : (
             <>
               <div className="card-value">{weather?.temp}°C</div>
               <div className="card-sub">{weather?.status}</div>
-              <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem', fontSize: '0.8rem', color: 'var(--muted)' }}>
-                <span>습도 {weather?.humidity}%</span>
-                <span>풍속 {weather?.windSpeed}m/s</span>
-              </div>
             </>
           )}
         </section>
 
         <section className="now-card subway-card">
-          <div className="card-label">🚃 경강선 이천역</div>
+          <div className="card-label">🚃 SUBWAY</div>
           {loading.subway ? (
-            <div className="card-value" style={{ fontSize: '1.2rem' }}>로딩 중…</div>
+            <div className="card-value">로딩 중…</div>
           ) : nextTrain ? (
             <>
-              <div className="card-value" style={{ fontSize: '1.4rem' }}>
+              <div className="card-value">
                 {minutesLabel(nextTrain.minutesLeft)}
               </div>
-              <div className="card-sub">{nextTrain.destination} 방면 · {nextTrain.departureTime} 출발</div>
-              {nextTrain.isLastTrain && (
-                <div style={{ fontSize: '0.75rem', color: 'var(--accent)', marginTop: '4px' }}>막차</div>
-              )}
+              <div className="card-sub">{nextTrain.destination} · {nextTrain.departureTime}</div>
             </>
           ) : (
-            <div className="card-value" style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>운행 종료</div>
+            <div className="card-value" style={{ color: 'var(--muted)' }}>운행 종료</div>
           )}
         </section>
 
-        <section className="now-card currency-card">
-          <div className="card-label">💳 이천사랑상품권</div>
-          <div className="card-value">10%</div>
-          <div className="card-sub">구매 인센티브</div>
-          <a
-            href="https://www.icheon.go.kr"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ fontSize: '0.75rem', color: 'var(--primary)', marginTop: '0.5rem', display: 'inline-block' }}
-          >
-            이천시청 바로가기 →
-          </a>
+        <section className="now-card hospital-card">
+          <div className="card-label">🏥 HOSPITAL</div>
+          {loading.medical ? (
+            <div className="card-value">로딩 중…</div>
+          ) : (
+            <>
+              <div className="card-value">{filteredHospitals.length}곳</div>
+              <div className="card-sub">{regionFilter === '전체' ? '이천시' : regionFilter} 등록 병의원</div>
+            </>
+          )}
         </section>
 
         <section className="now-card pharmacy-card">
-          <div className="card-label">💊 약국 정보</div>
+          <div className="card-label">💊 PHARMACY</div>
           {loading.medical ? (
-            <div className="card-value" style={{ fontSize: '1.2rem' }}>로딩 중…</div>
+            <div className="card-value">로딩 중…</div>
           ) : (
             <>
-              <div className="card-value">{pharmacies.length}곳</div>
-              <div className="card-sub">이천시 등록 약국</div>
+              <div className="card-value">{filteredPharmacies.length}곳</div>
+              <div className="card-sub">{regionFilter === '전체' ? '이천시' : regionFilter} 등록 약국</div>
             </>
           )}
         </section>
@@ -258,6 +269,21 @@ export default function NowClient() {
 
       <section className="map-section">
         <h2 className="section-title">병원·약국 정보</h2>
+        
+        <div className="filter-card" style={{ marginBottom: '24px' }}>
+          <div className="region-chips">
+            {REGIONS.map(region => (
+              <button
+                key={region}
+                className={`region-chip ${regionFilter === region ? 'active' : ''}`}
+                onClick={() => setRegionFilter(region)}
+              >
+                {region}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <div className="map-controls">
           <button className={`map-btn ${mapTab === 'pharmacy' ? 'active' : ''}`} onClick={() => setMapTab('pharmacy')}>💊 약국</button>
           <button className={`map-btn ${mapTab === 'hospital' ? 'active' : ''}`} onClick={() => setMapTab('hospital')}>🏥 병원</button>
