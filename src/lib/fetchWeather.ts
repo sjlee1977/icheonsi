@@ -65,7 +65,10 @@ export async function fetchWeather(): Promise<WeatherResult> {
 
     const data = JSON.parse(text)
     const resultCode = data?.response?.header?.resultCode
-    if (resultCode && resultCode !== '00') return { temp: '--', humidity: '--', windSpeed: '--', status: '맑음', error: `기상청 오류` }
+    if (resultCode && resultCode !== '00') {
+      console.error(`[WeatherAPI] Error code ${resultCode}: ${data?.response?.header?.resultMsg}`)
+      return { temp: '--', humidity: '--', windSpeed: '--', status: '맑음', error: `기상청 오류 (${resultCode})` }
+    }
 
     const items: Array<{ category: string; obsrValue: string }> = data?.response?.body?.items?.item ?? []
 
