@@ -95,22 +95,26 @@ export default function NowPage() {
     const weatherInterval = setInterval(fetchWeather, 10 * 60 * 1000)
     const subwayInterval = setInterval(fetchSubway, 60 * 1000) // 1분마다
 
-    // handle hash navigation
+    // 초기 hash 기반 탭 설정 (스크롤은 데이터 로딩 후에 처리)
     if (typeof window !== 'undefined') {
       const hash = window.location.hash
-      if (hash === '#pharmacy') {
-        setMapTab('pharmacy')
-        const elem = document.querySelector('.map-section')
-        elem?.scrollIntoView({ behavior: 'smooth' })
-      } else if (hash === '#hospital') {
-        setMapTab('hospital')
-        const elem = document.querySelector('.map-section')
-        elem?.scrollIntoView({ behavior: 'smooth' })
-      }
+      if (hash === '#pharmacy') setMapTab('pharmacy')
+      else if (hash === '#hospital') setMapTab('hospital')
     }
 
     return () => { clearInterval(weatherInterval); clearInterval(subwayInterval) }
   }, [fetchWeather, fetchSubway])
+
+  // 의료 데이터 로딩 완료 후 hash 스크롤
+  useEffect(() => {
+    if (loading.medical) return
+    if (typeof window === 'undefined') return
+    const hash = window.location.hash
+    if (hash === '#pharmacy' || hash === '#hospital') {
+      const elem = document.querySelector('.map-section')
+      elem?.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [loading.medical])
 
   const weatherIcon = WEATHER_ICONS[weather?.status ?? ''] ?? '🌤️'
   const activeList = mapTab === 'pharmacy' ? pharmacies : hospitals
