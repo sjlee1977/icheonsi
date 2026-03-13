@@ -51,7 +51,7 @@ export default function BentoClient() {
   return (
     <div className="bento-grid">
       {/* 날씨 */}
-      <Link href="/now" className="bento-card weather-bento">
+      <Link href="/now/weather" className="bento-card weather-bento">
         <span className="bento-label">WEATHER {weatherIcon}</span>
         <div className="bento-main">
           {weather ? (weather.error ? '--°C' : `${weather.temp}°C`) : '--°C'}
@@ -62,7 +62,7 @@ export default function BentoClient() {
       </Link>
 
       {/* 경강선 */}
-      <Link href="/now" className="bento-card subway-bento">
+      <Link href="/now/subway" className="bento-card subway-bento">
         <span className="bento-label">SUBWAY 🚃</span>
         <div className="bento-main">
           {nextTrain
