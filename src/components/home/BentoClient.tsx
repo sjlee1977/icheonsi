@@ -76,13 +76,6 @@ export default function BentoClient() {
         </span>
       </Link>
 
-      {/* 이천사랑상품권 */}
-      <div className="bento-card currency-bento">
-        <span className="bento-label">이천사랑상품권</span>
-        <div className="bento-main">10%</div>
-        <span className="bento-sub">구매 인센티브 제공 중</span>
-      </div>
-
       {/* 약국 */}
       <Link href="/now/pharmacy" className="bento-card pharmacy-bento">
         <span className="bento-label">PHARMACY 💊</span>
