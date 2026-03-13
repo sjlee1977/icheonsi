@@ -92,10 +92,16 @@ export default function RootLayout({
               }, 3000);
             }
 
+            // 캡처 단계로 script 태그 로드 실패(404) 감지
             window.addEventListener('error', function(e) {
+              var target = e.target || e.srcElement;
+              if (target && target.tagName === 'SCRIPT') {
+                var src = target.src || '';
+                if (src.indexOf('/_next/') !== -1) { onChunkError(); return; }
+              }
               var msg = (e && e.message) || '';
               if (/chunk/i.test(msg)) { onChunkError(); }
-            });
+            }, true);
             window.addEventListener('unhandledrejection', function(e) {
               if (!e || !e.reason) return;
               var name = String(e.reason.name || '');
