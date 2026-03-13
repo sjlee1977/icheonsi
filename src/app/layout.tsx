@@ -63,35 +63,38 @@ export default function RootLayout({
               if (e.persisted) { window.location.reload(); }
             });
 
-            // URL ?_r 파라미터 제거 (정상 로드 후 URL 정리)
+            // URL 파라미터 제거 (정상 로드 후 URL 정리)
             window.addEventListener('load', function() {
               try {
                 var url = new URL(window.location.href);
-                if (url.searchParams.has('_r')) {
-                  url.searchParams.delete('_r');
-                  history.replaceState(null, '', url.toString());
-                }
+                var changed = false;
+                if (url.searchParams.has('_retry')) { url.searchParams.delete('_retry'); changed = true; }
+                if (url.searchParams.has('_t')) { url.searchParams.delete('_t'); changed = true; }
+                if (changed) history.replaceState(null, '', url.toString());
               } catch(e) {}
             });
 
-            // ChunkLoadError: 쿼리 파라미터로 캐시 완전 우회 후 리다이렉트
+            // ChunkLoadError: 3초 대기 후 타임스탬프 URL로 캐시 완전 우회 (React가 잡기 전 단계)
             var handled = false;
             function onChunkError() {
               if (handled) return;
               handled = true;
-              try {
-                var url = new URL(window.location.href);
-                var count = parseInt(url.searchParams.get('_r') || '0', 10);
-                if (count < 3) {
-                  url.searchParams.set('_r', String(count + 1));
-                  window.location.replace(url.toString());
-                }
-              } catch(e) { window.location.reload(); }
+              setTimeout(function() {
+                try {
+                  var url = new URL(window.location.href);
+                  var retry = parseInt(url.searchParams.get('_retry') || '0', 10);
+                  if (retry < 3) {
+                    url.searchParams.set('_retry', String(retry + 1));
+                    url.searchParams.set('_t', String(Date.now()));
+                    window.location.replace(url.toString());
+                  }
+                } catch(e) { window.location.reload(); }
+              }, 3000);
             }
 
             window.addEventListener('error', function(e) {
               var msg = (e && e.message) || '';
-              if (/chunk/i.test(msg) || /Loading chunk/i.test(msg)) { onChunkError(); }
+              if (/chunk/i.test(msg)) { onChunkError(); }
             });
             window.addEventListener('unhandledrejection', function(e) {
               if (!e || !e.reason) return;
