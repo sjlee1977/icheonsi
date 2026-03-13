@@ -91,14 +91,14 @@ export default function BentoClient() {
       </div>
 
       {/* 의료·보건 약국 */}
-      <Link href="/now#pharmacy" className="bento-card pharmacy-bento">
+      <Link href="/now/pharmacy" className="bento-card pharmacy-bento">
         <span className="bento-label">PHARMACY 💊</span>
         <div className="bento-main">이천</div>
         <span className="bento-sub">약국 정보 →</span>
       </Link>
 
       {/* 의료·보건 병원 */}
-      <Link href="/now#hospital" className="bento-card hospital-bento">
+      <Link href="/now/hospital" className="bento-card hospital-bento">
         <span className="bento-label">HOSPITAL 🏥</span>
         <div className="bento-main">이천</div>
         <span className="bento-sub">병원 정보 →</span>
