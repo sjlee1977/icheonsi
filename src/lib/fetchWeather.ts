@@ -56,7 +56,10 @@ export async function fetchWeather(): Promise<WeatherResult> {
     `&nx=${NX}&ny=${NY}`
 
   try {
-    const res = await fetch(url, { next: { revalidate: 600 } })
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 3000) // 3초 타임아웃
+    const res = await fetch(url, { next: { revalidate: 600 }, signal: controller.signal })
+    clearTimeout(timeout)
     const text = await res.text()
     if (text.startsWith('<')) return { temp: '--', humidity: '--', windSpeed: '--', status: '맑음', error: 'XML 응답' }
 
