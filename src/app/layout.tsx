@@ -55,29 +55,51 @@ export default function RootLayout({
     <html lang="ko" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        {/* ChunkLoadError: 배포 후 구버전 청크 404 시 자동 새로고침 (30초 쿨다운) */}
+        {/* ChunkLoadError: 캐시 우회 쿼리 파라미터로 재시도, bfcache 복원 시 강제 새로고침 */}
         <script dangerouslySetInnerHTML={{ __html: `
-          function handleChunkError() {
-            var now = Date.now();
-            var last = parseInt(localStorage.getItem('chunk_reload_at') || '0', 10);
-            if (now - last > 30000) {
-              localStorage.setItem('chunk_reload_at', String(now));
-              window.location.reload();
+          (function() {
+            // bfcache 복원 시 강제 새로고침 (뒤로가기 후 청크 불일치 방지)
+            window.addEventListener('pageshow', function(e) {
+              if (e.persisted) { window.location.reload(); }
+            });
+
+            // URL ?_r 파라미터 제거 (정상 로드 후 URL 정리)
+            window.addEventListener('load', function() {
+              try {
+                var url = new URL(window.location.href);
+                if (url.searchParams.has('_r')) {
+                  url.searchParams.delete('_r');
+                  history.replaceState(null, '', url.toString());
+                }
+              } catch(e) {}
+            });
+
+            // ChunkLoadError: 쿼리 파라미터로 캐시 완전 우회 후 리다이렉트
+            var handled = false;
+            function onChunkError() {
+              if (handled) return;
+              handled = true;
+              try {
+                var url = new URL(window.location.href);
+                var count = parseInt(url.searchParams.get('_r') || '0', 10);
+                if (count < 3) {
+                  url.searchParams.set('_r', String(count + 1));
+                  window.location.replace(url.toString());
+                }
+              } catch(e) { window.location.reload(); }
             }
-          }
-          window.addEventListener('error', function(e) {
-            if (e && e.message && (
-              e.message.indexOf('Loading chunk') !== -1 ||
-              e.message.indexOf('ChunkLoadError') !== -1 ||
-              e.message.indexOf('Failed to load chunk') !== -1
-            )) { handleChunkError(); }
-          });
-          window.addEventListener('unhandledrejection', function(e) {
-            if (e && e.reason && (
-              e.reason.name === 'ChunkLoadError' ||
-              (e.reason.message && e.reason.message.indexOf('chunk') !== -1)
-            )) { handleChunkError(); }
-          });
+
+            window.addEventListener('error', function(e) {
+              var msg = (e && e.message) || '';
+              if (/chunk/i.test(msg) || /Loading chunk/i.test(msg)) { onChunkError(); }
+            });
+            window.addEventListener('unhandledrejection', function(e) {
+              if (!e || !e.reason) return;
+              var name = String(e.reason.name || '');
+              var msg = String(e.reason.message || '');
+              if (/chunk/i.test(name) || /chunk/i.test(msg)) { onChunkError(); }
+            });
+          })();
         `}} />
       </head>
       <body
