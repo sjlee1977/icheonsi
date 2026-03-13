@@ -55,6 +55,30 @@ export default function RootLayout({
     <html lang="ko" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
+        {/* ChunkLoadError: 배포 후 구버전 청크 404 시 자동 새로고침 */}
+        <script dangerouslySetInnerHTML={{ __html: `
+          window.addEventListener('error', function(e) {
+            if (e && e.message && (
+              e.message.indexOf('Loading chunk') !== -1 ||
+              e.message.indexOf('ChunkLoadError') !== -1 ||
+              e.message.indexOf('Failed to load chunk') !== -1
+            )) {
+              var key = 'chunk_reload_' + Date.now();
+              if (!sessionStorage.getItem('chunk_reloaded')) {
+                sessionStorage.setItem('chunk_reloaded', '1');
+                window.location.reload();
+              }
+            }
+          });
+          window.addEventListener('unhandledrejection', function(e) {
+            if (e && e.reason && e.reason.name === 'ChunkLoadError') {
+              if (!sessionStorage.getItem('chunk_reloaded')) {
+                sessionStorage.setItem('chunk_reloaded', '1');
+                window.location.reload();
+              }
+            }
+          });
+        `}} />
       </head>
       <body
         className={`${notoSans.variable} ${notoSerif.variable} ${jetbrainsMono.variable} antialiased`}
