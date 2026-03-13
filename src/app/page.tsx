@@ -1,18 +1,10 @@
-export const dynamic = 'force-dynamic'
-
 import Providers from '@/components/layout/Providers'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import BentoClient from '@/components/home/BentoClient'
 import Link from 'next/link'
-import { fetchWeather } from '@/lib/fetchWeather'
-import { getNextTrainsFromIcheon } from '@/lib/gyeonggang-timetable'
 
-export default async function Home() {
-  const [initialWeather, initialSubway] = await Promise.all([
-    fetchWeather(),
-    Promise.resolve(getNextTrainsFromIcheon()),
-  ])
+export default function Home() {
   return (
     <Providers>
       <Navbar />
@@ -59,7 +51,7 @@ export default async function Home() {
 
             {/* Bento 미리보기 — 실데이터 연동 */}
             <div className="hero-visual">
-              <BentoClient initialWeather={initialWeather} initialSubway={initialSubway} />
+              <BentoClient />
             </div>
           </div>
         </section>

@@ -2,7 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import type { WeatherResult } from '@/lib/fetchWeather'
+
+interface WeatherData {
+  temp: number | string
+  status: string
+  error?: string
+}
 
 interface TrainInfo {
   destination: string
@@ -20,17 +25,11 @@ const WEATHER_ICONS: Record<string, string> = {
   소나기: '⛈️', 빗방울: '🌦️', 빗방울눈날림: '🌨️', 눈날림: '🌨️',
 }
 
-interface Props {
-  initialWeather: WeatherResult
-  initialSubway: SubwayData
-}
-
-export default function BentoClient({ initialWeather, initialSubway }: Props) {
-  const [weather, setWeather] = useState<WeatherResult>(initialWeather)
-  const [subway, setSubway] = useState<SubwayData>(initialSubway)
+export default function BentoClient() {
+  const [weather, setWeather] = useState<WeatherData | null>(null)
+  const [subway, setSubway] = useState<SubwayData | null>(null)
 
   useEffect(() => {
-    // 백그라운드에서 최신 데이터로 갱신 (날씨는 10분 캐시라 대부분 즉시 응답)
     fetch('/api/weather').then(r => r.json()).then(setWeather).catch(() => null)
     fetch('/api/subway').then(r => r.json()).then(setSubway).catch(() => null)
 
@@ -41,6 +40,7 @@ export default function BentoClient({ initialWeather, initialSubway }: Props) {
   }, [])
 
   const nextTrain = (() => {
+    if (!subway) return null
     const all = [...(subway.toPangyo ?? []), ...(subway.toYeoju ?? [])]
       .sort((a, b) => a.minutesLeft - b.minutesLeft)
     return all[0] ?? null
@@ -54,10 +54,10 @@ export default function BentoClient({ initialWeather, initialSubway }: Props) {
       <Link href="/now" className="bento-card weather-bento">
         <span className="bento-label">WEATHER {weatherIcon}</span>
         <div className="bento-main">
-          {weather.error ? '--°C' : `${weather.temp}°C`}
+          {weather ? (weather.error ? '--°C' : `${weather.temp}°C`) : '--°C'}
         </div>
         <span className="bento-sub">
-          {weather.error ? '데이터 오류' : weather.status}
+          {weather?.error ? '데이터 오류' : (weather?.status ?? '불러오는 중...')}
         </span>
       </Link>
 
@@ -83,14 +83,14 @@ export default function BentoClient({ initialWeather, initialSubway }: Props) {
         <span className="bento-sub">구매 인센티브 제공 중</span>
       </div>
 
-      {/* 의료·보건 약국 */}
+      {/* 약국 */}
       <Link href="/now/pharmacy" className="bento-card pharmacy-bento">
         <span className="bento-label">PHARMACY 💊</span>
         <div className="bento-main">이천</div>
         <span className="bento-sub">약국 정보 →</span>
       </Link>
 
-      {/* 의료·보건 병원 */}
+      {/* 병원 */}
       <Link href="/now/hospital" className="bento-card hospital-bento">
         <span className="bento-label">HOSPITAL 🏥</span>
         <div className="bento-main">이천</div>
