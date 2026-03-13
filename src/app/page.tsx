@@ -3,8 +3,14 @@ import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import BentoClient from '@/components/home/BentoClient'
 import Link from 'next/link'
+import { fetchWeather } from '@/lib/fetchWeather'
+import { getNextTrainsFromIcheon } from '@/lib/gyeonggang-timetable'
 
-export default function Home() {
+export default async function Home() {
+  const [initialWeather, initialSubway] = await Promise.all([
+    fetchWeather(),
+    Promise.resolve(getNextTrainsFromIcheon()),
+  ])
   return (
     <Providers>
       <Navbar />
@@ -51,7 +57,7 @@ export default function Home() {
 
             {/* Bento 미리보기 — 실데이터 연동 */}
             <div className="hero-visual">
-              <BentoClient />
+              <BentoClient initialWeather={initialWeather} initialSubway={initialSubway} />
             </div>
           </div>
         </section>

@@ -2,12 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-
-interface WeatherData {
-  temp: number | string
-  status: string
-  error?: string
-}
+import type { WeatherResult } from '@/lib/fetchWeather'
 
 interface TrainInfo {
   destination: string
@@ -25,20 +20,19 @@ const WEATHER_ICONS: Record<string, string> = {
   소나기: '⛈️', 빗방울: '🌦️', 빗방울눈날림: '🌨️', 눈날림: '🌨️',
 }
 
-export default function BentoClient() {
-  const [weather, setWeather] = useState<WeatherData | null>(null)
-  const [subway, setSubway] = useState<SubwayData | null>(null)
+interface Props {
+  initialWeather: WeatherResult
+  initialSubway: SubwayData
+}
+
+export default function BentoClient({ initialWeather, initialSubway }: Props) {
+  const [weather, setWeather] = useState<WeatherResult>(initialWeather)
+  const [subway, setSubway] = useState<SubwayData>(initialSubway)
 
   useEffect(() => {
-    fetch('/api/weather')
-      .then(r => r.json())
-      .then(setWeather)
-      .catch(() => null)
-
-    fetch('/api/subway')
-      .then(r => r.json())
-      .then(setSubway)
-      .catch(() => null)
+    // 백그라운드에서 최신 데이터로 갱신 (날씨는 10분 캐시라 대부분 즉시 응답)
+    fetch('/api/weather').then(r => r.json()).then(setWeather).catch(() => null)
+    fetch('/api/subway').then(r => r.json()).then(setSubway).catch(() => null)
 
     const iv = setInterval(() => {
       fetch('/api/subway').then(r => r.json()).then(setSubway).catch(() => null)
@@ -47,7 +41,6 @@ export default function BentoClient() {
   }, [])
 
   const nextTrain = (() => {
-    if (!subway) return null
     const all = [...(subway.toPangyo ?? []), ...(subway.toYeoju ?? [])]
       .sort((a, b) => a.minutesLeft - b.minutesLeft)
     return all[0] ?? null
@@ -61,10 +54,10 @@ export default function BentoClient() {
       <Link href="/now" className="bento-card weather-bento">
         <span className="bento-label">WEATHER {weatherIcon}</span>
         <div className="bento-main">
-          {weather ? (weather.error ? '--°C' : `${weather.temp}°C`) : '--°C'}
+          {weather.error ? '--°C' : `${weather.temp}°C`}
         </div>
         <span className="bento-sub">
-          {weather?.error ? '데이터 오류' : (weather?.status ?? '불러오는 중...')}
+          {weather.error ? '데이터 오류' : weather.status}
         </span>
       </Link>
 
