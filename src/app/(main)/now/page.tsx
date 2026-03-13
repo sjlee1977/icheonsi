@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { fetchWeather } from '@/lib/fetchWeather'
 import { getNextTrainsFromIcheon } from '@/lib/gyeonggang-timetable'
 import NowClient from './NowClient'
