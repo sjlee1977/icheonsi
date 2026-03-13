@@ -90,11 +90,18 @@ export default function BentoClient() {
         <span className="bento-sub">구매 인센티브 제공 중</span>
       </div>
 
-      {/* 의료·보건 */}
-      <Link href="/now" className="bento-card pharmacy-bento">
+      {/* 의료·보건 약국 */}
+      <Link href="/now#pharmacy" className="bento-card pharmacy-bento">
         <span className="bento-label">PHARMACY 💊</span>
         <div className="bento-main">이천</div>
-        <span className="bento-sub">병원·약국 정보 →</span>
+        <span className="bento-sub">약국 정보 →</span>
+      </Link>
+
+      {/* 의료·보건 병원 */}
+      <Link href="/now#hospital" className="bento-card hospital-bento">
+        <span className="bento-label">HOSPITAL 🏥</span>
+        <div className="bento-main">이천</div>
+        <span className="bento-sub">병원 정보 →</span>
       </Link>
 
       {/* 하이닉스 게시판 */}

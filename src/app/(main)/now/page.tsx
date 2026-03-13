@@ -94,6 +94,21 @@ export default function NowPage() {
 
     const weatherInterval = setInterval(fetchWeather, 10 * 60 * 1000)
     const subwayInterval = setInterval(fetchSubway, 60 * 1000) // 1분마다
+
+    // handle hash navigation
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash
+      if (hash === '#pharmacy') {
+        setMapTab('pharmacy')
+        const elem = document.querySelector('.map-section')
+        elem?.scrollIntoView({ behavior: 'smooth' })
+      } else if (hash === '#hospital') {
+        setMapTab('hospital')
+        const elem = document.querySelector('.map-section')
+        elem?.scrollIntoView({ behavior: 'smooth' })
+      }
+    }
+
     return () => { clearInterval(weatherInterval); clearInterval(subwayInterval) }
   }, [fetchWeather, fetchSubway])
 
