@@ -33,6 +33,8 @@ const STATIONS = ['판교', '경기광주', '초월', '곤지암', '신둔도예
 export default function SubwayPage() {
   const [subwayData, setSubwayData] = useState<SubwayData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [expanded, setExpanded] = useState(false)
+
 
   const fetchSubway = useCallback(async () => {
     try {
@@ -117,33 +119,56 @@ export default function SubwayPage() {
       {loading ? (
         <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--muted)' }}>불러오는 중…</div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-          {/* 판교 방면 */}
-          <div className="now-card" style={{ padding: '1.25rem' }}>
-            <div style={{ fontWeight: 700, marginBottom: '12px', color: '#F97316', fontSize: '0.95rem' }}>← 판교 방면 (상행)</div>
-            {subwayData?.toPangyo.length ? subwayData.toPangyo.map((t, i) => (
-              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--border)', fontSize: '0.9rem' }}>
-                <span style={{ fontWeight: i === 0 ? 700 : 400 }}>{t.departureTime}</span>
-                <span style={{ color: i === 0 ? '#F97316' : 'var(--muted)' }}>
-                  {minutesLabel(t.minutesLeft)}{t.isLastTrain && ' 🔴'}
-                </span>
-              </div>
-            )) : <p style={{ fontSize: '0.85rem', color: 'var(--muted)' }}>운행 종료</p>}
+        <>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            {/* 판교 방면 */}
+            <div className="now-card" style={{ padding: '1.25rem' }}>
+              <div style={{ fontWeight: 700, marginBottom: '12px', color: '#F97316', fontSize: '0.95rem' }}>← 판교 방면 (상행)</div>
+              {subwayData?.toPangyo.length ? subwayData.toPangyo.slice(0, expanded ? undefined : 3).map((t, i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--border)', fontSize: '0.9rem' }}>
+                  <span style={{ fontWeight: i === 0 ? 700 : 400 }}>{t.departureTime}</span>
+                  <span style={{ color: i === 0 ? '#F97316' : 'var(--muted)' }}>
+                    {minutesLabel(t.minutesLeft)}{t.isLastTrain && ' 🔴'}
+                  </span>
+                </div>
+              )) : <p style={{ fontSize: '0.85rem', color: 'var(--muted)' }}>운행 종료</p>}
+            </div>
+
+            {/* 여주 방면 */}
+            <div className="now-card" style={{ padding: '1.25rem' }}>
+              <div style={{ fontWeight: 700, marginBottom: '12px', color: 'var(--accent)', fontSize: '0.95rem' }}>여주 방면 (하행) →</div>
+              {subwayData?.toYeoju.length ? subwayData.toYeoju.slice(0, expanded ? undefined : 3).map((t, i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--border)', fontSize: '0.9rem' }}>
+                  <span style={{ fontWeight: i === 0 ? 700 : 400 }}>{t.departureTime}</span>
+                  <span style={{ color: i === 0 ? 'var(--accent)' : 'var(--muted)' }}>
+                    {minutesLabel(t.minutesLeft)}{t.isLastTrain && ' 🔴'}
+                  </span>
+                </div>
+              )) : <p style={{ fontSize: '0.85rem', color: 'var(--muted)' }}>운행 종료</p>}
+            </div>
           </div>
 
-          {/* 여주 방면 */}
-          <div className="now-card" style={{ padding: '1.25rem' }}>
-            <div style={{ fontWeight: 700, marginBottom: '12px', color: 'var(--accent)', fontSize: '0.95rem' }}>여주 방면 (하행) →</div>
-            {subwayData?.toYeoju.length ? subwayData.toYeoju.map((t, i) => (
-              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--border)', fontSize: '0.9rem' }}>
-                <span style={{ fontWeight: i === 0 ? 700 : 400 }}>{t.departureTime}</span>
-                <span style={{ color: i === 0 ? 'var(--accent)' : 'var(--muted)' }}>
-                  {minutesLabel(t.minutesLeft)}{t.isLastTrain && ' 🔴'}
-                </span>
-              </div>
-            )) : <p style={{ fontSize: '0.85rem', color: 'var(--muted)' }}>운행 종료</p>}
-          </div>
-        </div>
+          {(subwayData?.toPangyo.length! > 3 || subwayData?.toYeoju.length! > 3) && (
+            <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
+              <button 
+                onClick={() => setExpanded(!expanded)}
+                style={{
+                  padding: '10px 32px',
+                  borderRadius: '30px',
+                  border: '1px solid var(--border)',
+                  backgroundColor: 'var(--card-bg)',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  boxShadow: 'var(--shadow-sm)'
+                }}
+              >
+                {expanded ? '상세 시간표 접기 ↑' : '전체 시간표 보기 ↓'}
+              </button>
+            </div>
+          )}
+        </>
       )}
 
       {subwayData?.note && (
