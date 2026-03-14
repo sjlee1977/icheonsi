@@ -40,10 +40,7 @@ export default function Home() {
                   <span className="stat-value">22.7만</span>
                   <span className="stat-label">이천시 총 인구</span>
                 </div>
-                <div className="stat">
-                  <span className="stat-value">5개</span>
-                  <span className="stat-label">핵심 서비스</span>
-                </div>
+
                 <div className="stat">
                   <span className="stat-value">BETA</span>
                   <span className="stat-label">서비스 운영 중</span>
