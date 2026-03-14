@@ -505,7 +505,7 @@ body {
   .hero-title { font-size: 2.8rem; }
   .hero-actions { flex-direction: column; }
   .hero-stats { gap: 28px; }
-  .hero-visual { display: none; }
+
   .nav-links { display: none; }
   .hamburger { display: flex; }
   .page-title { font-size: 2.2rem; }
