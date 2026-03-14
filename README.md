@@ -1,36 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 이천시.com (icheonsi.com)
 
-## Getting Started
+이천 사람들을 위한 실시간 정보 및 커뮤니티 플랫폼입니다. 
+경강선 지하철 도착 정보, 날씨, 병원/약국 현황 등 지역 필수 생활 정보와 익명 커뮤니티 기능을 제공합니다.
 
-First, run the development server:
+## ✨ 주요 기능
+- **이천 나우 (/now)**: 실시간 날씨, 경강선 열차 정보, 병원 및 약국 검색
+- **우리 동네 (/community)**: 분과별/주제별 지역 커뮤니티 게시판
+- **이천 장터 (/market)**: 지역 내 중고 거래 및 이천 특산물 직거래
+- **복지 허브 (/welfare)**: 맞춤형 이천시 복지 혜택 안내
+- **정착 가이드 (/guide)**: 신규 전입자를 위한 필수 생활 정보 가이드
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📝 릴리스 노트 (Changelog)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+여기에 프로젝트 개선 및 중요 수정 내역이 기록됩니다.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### [2026-03-14] UI 및 기능 업데이트
+- **지하철 정보 (Subway) 개선**:
+  - 홈 화면의 Bento 위젯 및 `/now/subway` 페이지에서 판교행뿐만 아니라 여주행(하행) 열차 정보도 추가 출력.
+  - "3분 후"와 같이 판교 도착 시간이 아닌 이천역 '출발 대기 시간'임을 명확히 표시.
+  - 열차 출발까지 남은 시간이 60분 이상일 경우, `x시간 x분 후` 형식으로 읽기 편하게 포맷팅 로직 적용.
+  - 직관성과 시인성을 위해 판교행 방면 폰트 색상을 기존 노란색(`var(--primary)`)에서 오렌지색(`#F97316`)으로 변경.
+  - `주말/평일` 표시 뱃지의 폰트 크기를 약 1px 확대해 가독성 향상.
+  - 반환 열차 대수를 3대로 제한했던 API 부분의 제한을 해제하여, 당일 운행이 끝날 때까지 남은 모든 열차 시간표를 출력하도록 수정.
+- **랜딩페이지 UI 수정**:
+  - 메인 페이지의 Hero 섹션 좌측에서 '핵심 서비스 5개' 통계 박스 문구를 제거.
+  - 모바일 해상도(768px 이하)에서 오른쪽 Bento 카드 UI(`.hero-visual`)가 보이지 않던 반응형 CSS 버그(`display: none`) 수정.
