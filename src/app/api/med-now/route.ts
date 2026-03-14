@@ -91,7 +91,7 @@ export async function GET() {
           tel: item.dutyTel1,
           address: item.dutyAddr,
           open: isOpenNow(item, day, currentTime),
-          naverUrl: `https://map.naver.com/v5/search/${encodeURIComponent(item.dutyName)}`
+          naverUrl: `https://map.naver.com/v5/search/${encodeURIComponent('이천 ' + item.dutyName)}`
         }))
         // 영업 중인 곳을 우선적으로 정렬
         .sort((a, b) => (a.open === b.open ? 0 : a.open ? -1 : 1))
@@ -121,7 +121,7 @@ export async function GET() {
         tel: item.telno,
         address: item.addr,
         open: false, // 실시간 정보 없음 표시
-        naverUrl: `https://map.naver.com/v5/search/${encodeURIComponent(item.yadmNm)}`
+        naverUrl: `https://map.naver.com/v5/search/${encodeURIComponent('이천 ' + item.yadmNm)}`
       })).filter(i => i.name)
     } catch (e) {
       console.error(`[Med-Now] HIRA ${type} error:`, e)
