@@ -16,6 +16,8 @@ interface MedicalItem {
   address: string
   tel: string
   type: string
+  open?: boolean
+  naverUrl?: string
 }
 
 interface TrainInfo {
@@ -102,7 +104,7 @@ export default function NowClient() {
 
     const weatherInterval = setInterval(fetchWeather, 30 * 60 * 1000)
     const subwayInterval = setInterval(fetchSubway, 60 * 1000)
-    const medicalInterval = setInterval(fetchMedical, 5 * 60 * 1000)
+    const medicalInterval = setInterval(fetchMedical, 3 * 60 * 60 * 1000)
 
     if (typeof window !== 'undefined') {
       const hash = window.location.hash
@@ -312,6 +314,26 @@ export default function NowClient() {
                 </div>
                 <div className="medical-address">📍 {item.address}</div>
                 {item.tel && <div className="medical-tel"><a href={`tel:${item.tel}`}>📞 {item.tel}</a></div>}
+                {item.naverUrl && (
+                  <div className="medical-naver" style={{ marginTop: '8px' }}>
+                    <a 
+                      href={item.naverUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      style={{ 
+                        fontSize: '0.8rem', 
+                        color: '#03C75A', 
+                        textDecoration: 'none', 
+                        fontWeight: 600,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}
+                    >
+                      <span>📍 네이버 지도에서 실시간 정보 확인</span>
+                    </a>
+                  </div>
+                )}
               </div>
             ))}
           </div>

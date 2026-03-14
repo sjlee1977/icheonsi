@@ -10,6 +10,7 @@ interface MedicalItem {
   tel: string
   address: string
   open: boolean
+  naverUrl: string
 }
 
 function isOpenNow(item: any, day: number, currentTime: string): boolean {
@@ -89,7 +90,8 @@ export async function GET() {
           name: item.dutyName,
           tel: item.dutyTel1,
           address: item.dutyAddr,
-          open: isOpenNow(item, day, currentTime)
+          open: isOpenNow(item, day, currentTime),
+          naverUrl: `https://map.naver.com/v5/search/${encodeURIComponent(item.dutyName)}`
         }))
         // 영업 중인 곳을 우선적으로 정렬
         .sort((a, b) => (a.open === b.open ? 0 : a.open ? -1 : 1))
@@ -118,7 +120,8 @@ export async function GET() {
         name: item.yadmNm,
         tel: item.telno,
         address: item.addr,
-        open: false // 실시간 정보 없음 표시
+        open: false, // 실시간 정보 없음 표시
+        naverUrl: `https://map.naver.com/v5/search/${encodeURIComponent(item.yadmNm)}`
       })).filter(i => i.name)
     } catch (e) {
       console.error(`[Med-Now] HIRA ${type} error:`, e)
@@ -136,13 +139,13 @@ export async function GET() {
   if (hospital === null) hospital = await fetchHIRA('hospital')
 
   return NextResponse.json({
-    pharmacy: pharmacy,
-    hospital: hospital,
+    pharmacy: pharmacy ?? [],
+    hospital: hospital ?? [],
     updatedAt: kst.toISOString(),
-    isRealTime: pharmacy.length > 0 && pharmacy[0].open
+    isRealTime: (pharmacy && pharmacy.length > 0 && pharmacy[0].open) || false
   }, {
     headers: {
-      'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600'
+      'Cache-Control': 'public, s-maxage=10800, stale-while-revalidate=18000'
     }
   })
 }

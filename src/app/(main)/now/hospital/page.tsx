@@ -9,6 +9,7 @@ interface MedicalItem {
   address: string
   tel: string
   open: boolean
+  naverUrl?: string
 }
 
 const REGIONS = [
@@ -103,10 +104,38 @@ export default function HospitalPage() {
                   <a href={`tel:${item.tel}`}>📞 {item.tel}</a>
                 </div>
               )}
+              {item.naverUrl && (
+                <div style={{ marginTop: '12px' }}>
+                  <a 
+                    href={item.naverUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="btn-naver"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      padding: '6px 12px',
+                      backgroundColor: '#03C75A',
+                      color: 'white',
+                      borderRadius: '6px',
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      textDecoration: 'none',
+                      gap: '6px'
+                    }}
+                  >
+                    <span>네이버 지도에서 실시간 정보 확인</span>
+                  </a>
+                </div>
+              )}
             </div>
           ))}
         </div>
       )}
+      <p style={{ fontSize: '0.75rem', color: 'var(--muted)', marginTop: '2rem', textAlign: 'center', lineHeight: 1.5 }}>
+        ℹ️ 진료 정보는 공공데이터 기반으로 실제와 다를 수 있습니다.<br />
+        정확한 운영 시간은 네이버 지도를 확인하거나 방문 전 전화로 문의해 주세요.
+      </p>
     </div>
   )
 }
