@@ -241,11 +241,11 @@ export default function NowClient() {
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '16px' }}>
               <div>
-                <div style={{ fontWeight: 700, marginBottom: '8px', color: 'var(--primary)' }}>← 판교 방면 (상행)</div>
+                <div style={{ fontWeight: 700, marginBottom: '8px', color: '#F97316' }}>← 판교 방면 (상행)</div>
                 {subwayData?.toPangyo.length ? subwayData.toPangyo.map((t, i) => (
                   <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--border)', fontSize: '0.9rem' }}>
                     <span style={{ fontWeight: i === 0 ? 700 : 400 }}>{t.departureTime}</span>
-                    <span style={{ color: i === 0 ? 'var(--primary)' : 'var(--muted)' }}>
+                    <span style={{ color: i === 0 ? '#F97316' : 'var(--muted)' }}>
                       {minutesLabel(t.minutesLeft)}{t.isLastTrain && ' 🔴막차'}
                     </span>
                   </div>

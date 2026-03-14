@@ -297,7 +297,7 @@ body {
 .train-section { margin-bottom: 48px; }
 .train-tracker { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; }
 .tracker-header { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; font-weight: 700; }
-.live-badge { background: var(--primary); color: var(--text); font-family: var(--font-mono), monospace; font-size: 0.63rem; font-weight: 800; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.08em; }
+.live-badge { background: var(--primary); color: var(--text); font-family: var(--font-mono), monospace; font-size: 0.7rem; font-weight: 800; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.08em; }
 .track-visual { position: relative; height: 56px; display: flex; align-items: center; margin-bottom: 20px; }
 .track-line { position: absolute; left: 10px; right: 10px; height: 4px; background: #EEE; border-radius: 10px; }
 .stations { position: absolute; left: 0; right: 0; display: flex; justify-content: space-between; z-index: 2; }
