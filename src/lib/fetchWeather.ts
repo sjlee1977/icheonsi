@@ -35,57 +35,117 @@ function getBaseDateTime() {
   }
 }
 
+export interface ForecastDay {
+  date: string
+  maxTemp: number
+  minTemp: number
+  humidity: number
+  windSpeed: number
+  status: string
+}
+
 export interface WeatherResult {
   temp: number | string
   humidity: number | string
   windSpeed: number | string
   status: string
+  forecast?: ForecastDay[]
   error?: string
+}
+
+async function fetchForecast(): Promise<ForecastDay[]> {
+  // 이천시 좌표
+  const lat = 37.2723
+  const lon = 127.435
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,relative_humidity_2m_mean,wind_speed_10m_max&timezone=Asia/Seoul`
+
+  try {
+    const res = await fetch(url, { next: { revalidate: 3600 } })
+    const data = await res.json()
+    const daily = data.daily
+
+    return daily.time.map((time: string, i: number) => {
+      // Open-Meteo WMO Code to Status Label
+      const code = daily.weather_code[i]
+      let status = '맑음'
+      if (code >= 1 && code <= 3) status = '맑음' // 구름조금/흐림 포함
+      if (code >= 51 && code <= 67) status = '비'
+      if (code >= 71 && code <= 77) status = '눈'
+      if (code >= 80 && code <= 82) status = '소나기'
+      if (code >= 85 && code <= 86) status = '눈'
+      if (code >= 95) status = '소나기'
+
+      return {
+        date: time,
+        maxTemp: Math.round(daily.temperature_2m_max[i]),
+        minTemp: Math.round(daily.temperature_2m_min[i]),
+        humidity: Math.round(daily.relative_humidity_2m_mean[i]),
+        windSpeed: daily.wind_speed_10m_max[i],
+        status,
+      }
+    })
+  } catch (err) {
+    console.error('[ForecastAPI] Error:', err)
+    return []
+  }
 }
 
 export async function fetchWeather(): Promise<WeatherResult> {
   const apiKey = process.env.PUBLIC_DATA_API_KEY
-  if (!apiKey) return { temp: '--', humidity: '--', windSpeed: '--', status: '맑음', error: 'no key' }
+  
+  // 기상청 데이터 초기값
+  let current: Partial<WeatherResult> = { temp: '--', humidity: '--', windSpeed: '--', status: '맑음' }
+  let forecast: ForecastDay[] = []
 
-  const { base_date, base_time } = getBaseDateTime()
-  const url =
-    `http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst` +
-    `?serviceKey=${apiKey}` +
-    `&pageNo=1&numOfRows=10&dataType=JSON` +
-    `&base_date=${base_date}&base_time=${base_time}` +
-    `&nx=${NX}&ny=${NY}`
+  // 병렬로 데이터 호출
+  const [weatherRes, forecastRes] = await Promise.allSettled([
+    apiKey ? (async () => {
+      const { base_date, base_time } = getBaseDateTime()
+      const url =
+        `http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst` +
+        `?serviceKey=${apiKey}` +
+        `&pageNo=1&numOfRows=10&dataType=JSON` +
+        `&base_date=${base_date}&base_time=${base_time}` +
+        `&nx=${NX}&ny=${NY}`
 
-  try {
-    const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 3000) // 3초 타임아웃
-    const res = await fetch(url, { next: { revalidate: 600 }, signal: controller.signal })
-    clearTimeout(timeout)
-    const text = await res.text()
-    if (text.startsWith('<')) return { temp: '--', humidity: '--', windSpeed: '--', status: '맑음', error: 'XML 응답' }
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 3000)
+      const res = await fetch(url, { next: { revalidate: 600 }, signal: controller.signal })
+      clearTimeout(timeout)
+      const text = await res.text()
+      if (text.startsWith('<')) throw new Error('XML Response')
 
-    const data = JSON.parse(text)
-    const resultCode = data?.response?.header?.resultCode
-    if (resultCode && resultCode !== '00') {
-      console.error(`[WeatherAPI] Error code ${resultCode}: ${data?.response?.header?.resultMsg}`)
-      return { temp: '--', humidity: '--', windSpeed: '--', status: '맑음', error: `기상청 오류 (${resultCode})` }
-    }
+      const data = JSON.parse(text)
+      const resultCode = data?.response?.header?.resultCode
+      if (resultCode && resultCode !== '00') throw new Error(`API Error ${resultCode}`)
 
-    const items: Array<{ category: string; obsrValue: string }> = data?.response?.body?.items?.item ?? []
+      const items: Array<{ category: string; obsrValue: string }> = data?.response?.body?.items?.item ?? []
+      let temp: number | string = '--'
+      let humidity: number | string = '--'
+      let windSpeed: number | string = '--'
+      let status = '맑음'
 
-    let temp: number | string = '--'
-    let humidity: number | string = '--'
-    let windSpeed: number | string = '--'
-    let status = '맑음'
+      for (const item of items) {
+        if (item.category === 'T1H') temp = parseFloat(item.obsrValue)
+        if (item.category === 'REH') humidity = parseFloat(item.obsrValue)
+        if (item.category === 'WSD') windSpeed = parseFloat(item.obsrValue)
+        if (item.category === 'PTY') status = PTY_LABELS[item.obsrValue] ?? '맑음'
+      }
+      return { temp, humidity, windSpeed, status }
+    })() : Promise.reject('No API Key'),
+    fetchForecast()
+  ])
 
-    for (const item of items) {
-      if (item.category === 'T1H') temp = parseFloat(item.obsrValue)
-      if (item.category === 'REH') humidity = parseFloat(item.obsrValue)
-      if (item.category === 'WSD') windSpeed = parseFloat(item.obsrValue)
-      if (item.category === 'PTY') status = PTY_LABELS[item.obsrValue] ?? '맑음'
-    }
+  if (weatherRes.status === 'fulfilled') {
+    current = weatherRes.value
+  }
+  if (forecastRes.status === 'fulfilled') {
+    forecast = forecastRes.value
+  }
 
-    return { temp, humidity, windSpeed, status }
-  } catch {
-    return { temp: '--', humidity: '--', windSpeed: '--', status: '맑음', error: '불러오기 실패' }
+  return {
+    ...current as WeatherResult,
+    forecast,
+    error: weatherRes.status === 'rejected' ? '기상청 정보 실패' : undefined
   }
 }
