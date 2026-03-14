@@ -110,21 +110,18 @@ export default function PharmacyPage() {
                     href={item.naverUrl} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="btn-naver"
+                    className="link-naver"
                     style={{
                       display: 'inline-flex',
                       alignItems: 'center',
-                      padding: '6px 12px',
-                      backgroundColor: '#03C75A',
-                      color: 'white',
-                      borderRadius: '6px',
+                      color: '#03C75A',
                       fontSize: '0.8rem',
                       fontWeight: 600,
                       textDecoration: 'none',
-                      gap: '6px'
+                      gap: '4px'
                     }}
                   >
-                    <span>네이버 지도에서 실시간 정보 확인</span>
+                    <span>📍 네이버 정보 확인</span>
                   </a>
                 </div>
               )}

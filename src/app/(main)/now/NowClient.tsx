@@ -330,7 +330,7 @@ export default function NowClient() {
                         gap: '4px'
                       }}
                     >
-                      <span>📍 네이버 지도에서 실시간 정보 확인</span>
+                      <span>📍 네이버 정보 확인</span>
                     </a>
                   </div>
                 )}
