@@ -120,7 +120,7 @@ export default function BentoClient() {
         <div className="bento-main" style={{ flexDirection: 'column', gap: '4px', alignItems: 'flex-start' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
             <span style={{ fontSize: '0.85rem', color: '#F97316', fontWeight: 600 }}>판교행</span>
-            <span style={{ fontSize: '1.1rem', fontWeight: 700 }}>
+            <span style={{ fontSize: '0.85rem', fontWeight: 700 }}>
               {nextPangyoTrain
                 ? (nextPangyoTrain.minutesLeft === 0 ? '곧 출발' : `${nextPangyoTrain.minutesLeft}분 후`)
                 : '--'}
@@ -128,7 +128,7 @@ export default function BentoClient() {
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
             <span style={{ fontSize: '0.85rem', color: 'var(--accent)', fontWeight: 600 }}>여주행</span>
-            <span style={{ fontSize: '1.1rem', fontWeight: 700 }}>
+            <span style={{ fontSize: '0.85rem', fontWeight: 700 }}>
               {nextYeojuTrain
                 ? (nextYeojuTrain.minutesLeft === 0 ? '곧 출발' : `${nextYeojuTrain.minutesLeft}분 후`)
                 : '--'}
