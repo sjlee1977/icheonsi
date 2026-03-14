@@ -80,12 +80,8 @@ export default function BentoClient() {
     }
   }, [])
 
-  const nextTrain = (() => {
-    if (!subway) return null
-    const all = [...(subway.toPangyo ?? []), ...(subway.toYeoju ?? [])]
-      .sort((a, b) => a.minutesLeft - b.minutesLeft)
-    return all[0] ?? null
-  })()
+  const nextPangyoTrain = subway?.toPangyo?.length ? subway.toPangyo[0] : null
+  const nextYeojuTrain = subway?.toYeoju?.length ? subway.toYeoju[0] : null
 
   const weatherIcon = WEATHER_ICONS[weather?.status ?? ''] ?? '🌤️'
 
@@ -121,16 +117,27 @@ export default function BentoClient() {
         <div className="bento-card-header">
           <span className="bento-label">SUBWAY 🚃</span>
         </div>
-        <div className="bento-main">
-          {nextTrain
-            ? (nextTrain.minutesLeft === 0 ? '곧 출발' : `${nextTrain.minutesLeft}분 후`)
-            : '--분 후'}
+        <div className="bento-main" style={{ flexDirection: 'column', gap: '4px', alignItems: 'flex-start' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+            <span style={{ fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 600 }}>판교행</span>
+            <span style={{ fontSize: '1.1rem', fontWeight: 700 }}>
+              {nextPangyoTrain
+                ? (nextPangyoTrain.minutesLeft === 0 ? '곧 출발' : `${nextPangyoTrain.minutesLeft}분 후`)
+                : '--'}
+            </span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+            <span style={{ fontSize: '0.85rem', color: 'var(--accent)', fontWeight: 600 }}>여주행</span>
+            <span style={{ fontSize: '1.1rem', fontWeight: 700 }}>
+              {nextYeojuTrain
+                ? (nextYeojuTrain.minutesLeft === 0 ? '곧 출발' : `${nextYeojuTrain.minutesLeft}분 후`)
+                : '--'}
+            </span>
+          </div>
         </div>
         <div className="bento-sub">
           <span className="truncate">
-            {nextTrain
-              ? `${nextTrain.destination} · ${nextTrain.departureTime}`
-              : '경강선 이천역'}
+            이천역 출발 시간표 보기 →
           </span>
         </div>
       </Link>
