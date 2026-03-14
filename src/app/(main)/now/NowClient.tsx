@@ -64,6 +64,8 @@ export default function NowClient() {
   const [regionFilter, setRegionFilter] = useState('전체')
   const [loading, setLoading] = useState({ weather: true, medical: true, subway: true })
   const [lastUpdated, setLastUpdated] = useState('')
+  const [subwayExpanded, setSubwayExpanded] = useState(false)
+
 
   const fetchWeather = useCallback(async () => {
     try {
@@ -244,7 +246,7 @@ export default function NowClient() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '16px' }}>
               <div>
                 <div style={{ fontWeight: 700, marginBottom: '8px', color: '#F97316' }}>← 판교 방면 (상행)</div>
-                {subwayData?.toPangyo.length ? subwayData.toPangyo.map((t, i) => (
+                {subwayData?.toPangyo.length ? subwayData.toPangyo.slice(0, subwayExpanded ? undefined : 3).map((t, i) => (
                   <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--border)', fontSize: '0.9rem' }}>
                     <span style={{ fontWeight: i === 0 ? 700 : 400 }}>{t.departureTime}</span>
                     <span style={{ color: i === 0 ? '#F97316' : 'var(--muted)' }}>
@@ -255,7 +257,7 @@ export default function NowClient() {
               </div>
               <div>
                 <div style={{ fontWeight: 700, marginBottom: '8px', color: 'var(--accent)' }}>여주 방면 (하행) →</div>
-                {subwayData?.toYeoju.length ? subwayData.toYeoju.map((t, i) => (
+                {subwayData?.toYeoju.length ? subwayData.toYeoju.slice(0, subwayExpanded ? undefined : 3).map((t, i) => (
                   <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--border)', fontSize: '0.9rem' }}>
                     <span style={{ fontWeight: i === 0 ? 700 : 400 }}>{t.departureTime}</span>
                     <span style={{ color: i === 0 ? 'var(--accent)' : 'var(--muted)' }}>
@@ -266,6 +268,27 @@ export default function NowClient() {
               </div>
             </div>
           )}
+
+          {!loading.subway && (subwayData?.toPangyo.length! > 3 || subwayData?.toYeoju.length! > 3) && (
+            <div style={{ textAlign: 'center', marginTop: '16px' }}>
+              <button 
+                onClick={() => setSubwayExpanded(!subwayExpanded)}
+                style={{
+                  padding: '8px 24px',
+                  borderRadius: '20px',
+                  border: '1px solid var(--border)',
+                  backgroundColor: 'var(--card-bg)',
+                  fontSize: '0.8rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+              >
+                {subwayExpanded ? '접기 ↑' : '더 보기 (펼치기) ↓'}
+              </button>
+            </div>
+          )}
+
 
           {subwayData?.note && (
             <p style={{ fontSize: '0.72rem', color: 'var(--muted)', marginTop: '12px', textAlign: 'center' }}>
