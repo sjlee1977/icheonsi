@@ -46,7 +46,7 @@ export default function WeatherPage() {
 
   useEffect(() => {
     fetchWeather()
-    const iv = setInterval(fetchWeather, 10 * 60 * 1000)
+    const iv = setInterval(fetchWeather, 30 * 60 * 1000)
     return () => clearInterval(iv)
   }, [fetchWeather])
 
@@ -97,7 +97,7 @@ export default function WeatherPage() {
             </div>
             
             <p style={{ fontSize: '0.72rem', color: 'var(--muted)', marginTop: '0.5rem' }}>
-              기상청 초단기실황 (nx=68, ny=107) · 10분마다 갱신
+              기상청 초단기실황 (nx=68, ny=107) 기준
             </p>
           </div>
 
@@ -152,7 +152,7 @@ export default function WeatherPage() {
               })}
             </div>
             <p style={{ fontSize: '0.72rem', color: 'var(--muted)', marginTop: '0.5rem' }}>
-              Open-Meteo 전지구 예보 모델 기반 · 매시 정각 갱신
+              Open-Meteo 및 글로벌 예보 모델 데이터 반영
             </p>
           </div>
         </div>

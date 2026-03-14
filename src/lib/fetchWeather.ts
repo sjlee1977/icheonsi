@@ -110,7 +110,7 @@ export async function fetchWeather(): Promise<WeatherResult> {
 
       const controller = new AbortController()
       const timeout = setTimeout(() => controller.abort(), 3000)
-      const res = await fetch(url, { next: { revalidate: 600 }, signal: controller.signal })
+      const res = await fetch(url, { next: { revalidate: 1800 }, signal: controller.signal })
       clearTimeout(timeout)
       const text = await res.text()
       if (text.startsWith('<')) throw new Error('XML Response')

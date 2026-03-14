@@ -100,7 +100,7 @@ export default function NowClient() {
     const now = new Date()
     setLastUpdated(`${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')} 기준`)
 
-    const weatherInterval = setInterval(fetchWeather, 10 * 60 * 1000)
+    const weatherInterval = setInterval(fetchWeather, 30 * 60 * 1000)
     const subwayInterval = setInterval(fetchSubway, 60 * 1000)
     const medicalInterval = setInterval(fetchMedical, 5 * 60 * 1000)
 
