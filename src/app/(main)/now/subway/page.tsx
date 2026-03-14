@@ -42,12 +42,8 @@ export default function SubwayPage() {
     return () => clearInterval(iv)
   }, [fetchSubway])
 
-  const nextTrain = (() => {
-    if (!subwayData) return null
-    const all = [...subwayData.toPangyo, ...subwayData.toYeoju]
-      .sort((a, b) => a.minutesLeft - b.minutesLeft)
-    return all[0] ?? null
-  })()
+  const nextPangyoTrain = subwayData?.toPangyo?.length ? subwayData.toPangyo[0] : null
+  const nextYeojuTrain = subwayData?.toYeoju?.length ? subwayData.toYeoju[0] : null
 
   return (
     <div className="page-container">
@@ -62,13 +58,34 @@ export default function SubwayPage() {
       </div>
 
       {/* 다음 열차 요약 */}
-      {!loading && nextTrain && (
-        <section className="now-card subway-card" style={{ marginBottom: '1.5rem', padding: '1.5rem' }}>
-          <div className="card-label">🚃 다음 열차</div>
-          <div className="card-value" style={{ fontSize: '2.5rem' }}>{minutesLabel(nextTrain.minutesLeft)}</div>
-          <div className="card-sub">{nextTrain.destination} 방면 · {nextTrain.departureTime} 출발</div>
-          {nextTrain.isLastTrain && <div style={{ fontSize: '0.75rem', color: 'var(--accent)', marginTop: '4px' }}>막차</div>}
-        </section>
+      {!loading && (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+          <section className="now-card subway-card" style={{ padding: '1.5rem' }}>
+            <div className="card-label" style={{ color: 'var(--primary)' }}>← 판교행 방면</div>
+            {nextPangyoTrain ? (
+              <>
+                <div className="card-value" style={{ fontSize: '2rem' }}>{minutesLabel(nextPangyoTrain.minutesLeft)}</div>
+                <div className="card-sub">{nextPangyoTrain.departureTime} 출발</div>
+                {nextPangyoTrain.isLastTrain && <div style={{ fontSize: '0.75rem', color: 'var(--accent)', marginTop: '4px' }}>막차</div>}
+              </>
+            ) : (
+             <div className="card-value" style={{ fontSize: '1.2rem', color: 'var(--muted)' }}>운행 종료</div>
+            )}
+          </section>
+
+          <section className="now-card subway-card" style={{ padding: '1.5rem', borderTopColor: 'var(--accent)' }}>
+            <div className="card-label" style={{ color: 'var(--accent)' }}>여주행 방면 →</div>
+            {nextYeojuTrain ? (
+              <>
+                <div className="card-value" style={{ fontSize: '2rem' }}>{minutesLabel(nextYeojuTrain.minutesLeft)}</div>
+                <div className="card-sub">{nextYeojuTrain.departureTime} 출발</div>
+                {nextYeojuTrain.isLastTrain && <div style={{ fontSize: '0.75rem', color: 'var(--accent)', marginTop: '4px' }}>막차</div>}
+              </>
+            ) : (
+             <div className="card-value" style={{ fontSize: '1.2rem', color: 'var(--muted)' }}>운행 종료</div>
+            )}
+          </section>
+        </div>
       )}
 
       {/* 노선 시각화 */}
