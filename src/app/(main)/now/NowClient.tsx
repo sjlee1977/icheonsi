@@ -44,7 +44,13 @@ const REGIONS = [
 
 function minutesLabel(min: number): string {
   if (min === 0) return '곧 출발'
-  return `${min}분 후`
+  if (min < 60) return `${min}분 후`
+  
+  const hours = Math.floor(min / 60)
+  const remainingMins = min % 60
+  
+  if (remainingMins === 0) return `${hours}시간 후`
+  return `${hours}시간 ${remainingMins}분 후`
 }
 
 export default function NowClient() {
