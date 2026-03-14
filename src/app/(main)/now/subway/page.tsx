@@ -61,7 +61,7 @@ export default function SubwayPage() {
       {!loading && (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
           <section className="now-card subway-card" style={{ padding: '1.5rem' }}>
-            <div className="card-label" style={{ color: 'var(--primary)' }}>← 판교행 방면</div>
+            <div className="card-label" style={{ color: '#F97316' }}>← 판교행 방면</div>
             {nextPangyoTrain ? (
               <>
                 <div className="card-value" style={{ fontSize: '2rem' }}>{minutesLabel(nextPangyoTrain.minutesLeft)}</div>
@@ -114,11 +114,11 @@ export default function SubwayPage() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
           {/* 판교 방면 */}
           <div className="now-card" style={{ padding: '1.25rem' }}>
-            <div style={{ fontWeight: 700, marginBottom: '12px', color: 'var(--primary)', fontSize: '0.95rem' }}>← 판교 방면 (상행)</div>
+            <div style={{ fontWeight: 700, marginBottom: '12px', color: '#F97316', fontSize: '0.95rem' }}>← 판교 방면 (상행)</div>
             {subwayData?.toPangyo.length ? subwayData.toPangyo.map((t, i) => (
               <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--border)', fontSize: '0.9rem' }}>
                 <span style={{ fontWeight: i === 0 ? 700 : 400 }}>{t.departureTime}</span>
-                <span style={{ color: i === 0 ? 'var(--primary)' : 'var(--muted)' }}>
+                <span style={{ color: i === 0 ? '#F97316' : 'var(--muted)' }}>
                   {minutesLabel(t.minutesLeft)}{t.isLastTrain && ' 🔴'}
                 </span>
               </div>
