@@ -127,21 +127,19 @@ function isWeekendOrHoliday(): boolean {
 function getNextTrains(
   timetable: string[],
   destination: string,
-  nowMin: number,
-  count = 3
+  nowMin: number
 ): TrainInfo[] {
   const results: TrainInfo[] = []
   for (let i = 0; i < timetable.length; i++) {
     const depMin = parseMinutes(timetable[i])
     const diff = depMin - nowMin
-    if (diff >= 0 && diff <= 180) {
+    if (diff >= 0) {
       results.push({
         destination,
         departureTime: timetable[i],
         minutesLeft: diff,
         isLastTrain: i === timetable.length - 1,
       })
-      if (results.length >= count) break
     }
   }
   return results

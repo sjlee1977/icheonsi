@@ -215,7 +215,7 @@ export default function NowClient() {
         <div className="train-tracker">
           <div className="tracker-header">
             <span className="live-badge">{subwayData?.isWeekend ? '주말' : '평일'}</span>
-            <span>이천역 출발 기준 · 다음 열차 3편</span>
+            <span>이천역 출발 기준</span>
           </div>
 
           <div className="track-visual" style={{ margin: '16px 0' }}>
